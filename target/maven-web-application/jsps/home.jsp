@@ -9,9 +9,7 @@
 </head>
 </head>
 <body>
-<h1 align="center">Welcome to IP Page.</h1>
-<h1 align="center"> Its Very Good Training center for DevOps with AWS in Maratha Halli Bangalore India and also for Job Assitance Job Support also...Teaching Real Time scnerios</h1>
-<hr>
+
 <br>
 	<h1><h3> Server Side IP Address </h3><br>
 
