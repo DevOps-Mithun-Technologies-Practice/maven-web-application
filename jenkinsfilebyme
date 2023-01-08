@@ -1,0 +1,27 @@
+node{
+    
+    properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '5', numToKeepStr: '5')), [$class: 'JobLocalConfiguration', changeReasonComment: '']])
+	
+	def mavenHome = tool name: "Maven 3.8.6"
+	stage("Get the code"){
+		git branch: 'dev', credentialsId: '5a1eaee9-91c3-45f1-a045-c872ed12362d', url: 'https://github.com/DevOps-Mithun-Technologies-Practice/maven-web-application.git'
+	}
+
+    stage("Build Project"){
+	    sh "${mavenHome}/bin/mvn clean package"
+    }	
+    
+    stage("Sonar Report"){
+        sh "${mavenHome}/bin/mvn sonar:sonar"
+    }
+    
+    stage("Deploy Artifact"){
+        sh "${mavenHome}/bin/mvn deploy"
+    }
+    
+    stage("Deploy to Tomcat"){
+        sshagent(['db286895-d838-4068-aa09-8a645d64170a']) {
+            sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@13.235.238.130:/opt/tomcat9/webapps"
+        }
+    }
+}
