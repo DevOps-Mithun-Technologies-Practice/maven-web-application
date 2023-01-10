@@ -1,0 +1,39 @@
+pipeline{
+    
+    agent any
+    
+    tools {
+        maven 'Maven 3.8.6'
+    }
+    
+    stages{
+        stage('Checkout Code'){
+            steps{
+                git branch: 'uat', credentialsId: '5a1eaee9-91c3-45f1-a045-c872ed12362d', url: 'https://github.com/DevOps-Mithun-Technologies-Practice/maven-web-application.git'
+            }
+        }
+        stage('Build Code'){
+            steps{
+                sh "mvn clean package"
+            }
+        }
+        stage('Sonar Report'){
+            steps{
+                sh "mvn sonar:sonar"
+            }
+        }
+        stage('Deploy Artifactory'){
+            steps{
+                sh "mvn clean deploy"
+            }
+        }
+        stage('Deploy Code'){
+            steps{
+                sshagent(['db286895-d838-4068-aa09-8a645d64170a']) {
+                    sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@13.232.152.86:/opt/tomcat9/webapps/"
+                }
+            }
+        }
+    }
+    
+}
